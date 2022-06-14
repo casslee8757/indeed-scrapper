@@ -8,7 +8,7 @@ db = {}
 
 @app.route("/")
 def home():
-  return render_template("home.html")
+  return render_template("index.html")
 
 @app.route("/report")
 def report():
@@ -50,4 +50,4 @@ def export():
   except:
     return redirect("/")
   
-app.run(host="0.0.0.0")
+app.run(host="0.0.0.0", port=8080)
