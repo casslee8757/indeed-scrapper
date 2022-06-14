@@ -1,13 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
-
-LIMIT = 50
-URL = 'https://au.indeed.com/jobs?q=python&limit={LIMIT}'
-
-def get_last_pages():
+def get_last_pages(url):
   
-  result = requests.get(URL)
+  result = requests.get(url)
   soup = BeautifulSoup(result.text, 'html.parser')
   
   pagination = soup.find('ul', {'class': 'pagination-list'})
@@ -38,11 +34,11 @@ def extract_job(html):
   }
     
 
-def extract_jobs(last_page):
+def extract_jobs(last_page, url):
   jobs = []
   for page in range(last_page):
     print(f"Scrapping page {page}")
-    result = requests.get(f"{URL}&start={page*LIMIT}")
+    result = requests.get(f"{url}&start={page+1}")
     soup = BeautifulSoup(result.text, 'html.parser')
     results = soup.find_all('div', {'class':'job_seen_beacon'})
     for result in results:
@@ -50,7 +46,8 @@ def extract_jobs(last_page):
       jobs.append(job)
   return jobs
 
-def get_jobs():
-  last_page = get_last_pages()
-  jobs = extract_jobs(last_page)
+def get_jobs(word):
+  url = f'https://au.indeed.com/jobs?q={word}'
+  last_page = get_last_pages(url)
+  jobs = extract_jobs(last_page, url)
   return jobs
